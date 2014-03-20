@@ -32,7 +32,7 @@ define('drupal_commenter', ['jquery'], function ($) {
 		return build_data;
 	};
 
-	public_functions.add_comment = function (message, options) {
+	public_functions.add_comment = function (message, options, func) {
 		$.get(options.node_url, function (data) {
             var form = $(data).find('#comment-form'),
                 data_parts = [],
@@ -51,7 +51,11 @@ define('drupal_commenter', ['jquery'], function ($) {
 			// data_parts.push({ key: '_triggering_element_name', value: 'op'});
             // data_parts.push({ key: '_triggering_element_value', value: 'Submit+comment'});
 
-            $.post(meta_data.comment_url, private_functions.build_data(data_parts));
+            $.post(meta_data.comment_url, private_functions.build_data(data_parts), function (data, textStatus, jqXHR) {
+				if (typeof func === 'function') {
+					func(data, textStatus, jqXHR);
+				}
+			});
         });
 
 	};
